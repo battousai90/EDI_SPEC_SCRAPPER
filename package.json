@@ -1,0 +1,36 @@
+{
+  "name": "edi-spec-scraper",
+  "version": "1.0.0",
+  "description": "Scraper pour les spécifications EDI depuis edifactory.de",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node server.js",
+    "scrape": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.7",
+    "@mui/material": "^6.4.7",
+    "axios": "^1.8.1",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "fs-extra": "^11.1.0",
+    "puppeteer": "^22.8.2",
+    "xml2js": "^0.6.2",
+    "xmlbuilder": "^15.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ds-gilbert/EDI_SPEC_SCRAPPER.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ds-gilbert/EDI_SPEC_SCRAPPER/issues"
+  },
+  "homepage": "https://github.com/ds-gilbert/EDI_SPEC_SCRAPPER#readme"
+}

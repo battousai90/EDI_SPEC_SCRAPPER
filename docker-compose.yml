@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: registry-dev.datasabai.lan:5000/edi-scrapper-backend:latest
+    container_name: edi-scrapper-backend
+    ports:
+      - "3001:3001"
+    volumes:
+      # Mount the output directory to persist scraped data
+      - ./output:/app/output
+      # Mount source code for development (comment out in production)
+      # - ./src:/app/src
+      # - ./server.js:/app/server.js
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    # Healthcheck to verify the application is running
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: registry-dev.datasabai.lan:5000/edi-scrapper-frontend:latest
+    container_name: edi-scrapper-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    restart: unless-stopped 
