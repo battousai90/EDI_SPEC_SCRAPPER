@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { exec } = require('child_process');
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
 
@@ -480,14 +481,16 @@ app.post('/api/write-to-ixpath', async (req, res) => {
   }
 });
 
-// Serve static frontend files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('frontend/build'));
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+// Serve static frontend files if build exists (for all environments)
+const frontendBuildPath = path.join(__dirname, 'frontend', 'build');
+if (fsSync.existsSync(frontendBuildPath)) {
+  app.use(express.static(frontendBuildPath));
+  // Fallback: serve index.html for all non-API routes
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(frontendBuildPath, 'index.html'));
   });
 }
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
-}); 
+});

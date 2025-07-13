@@ -16,11 +16,14 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+# Build the frontend React app
+RUN npm run build
+
 # Create output directory
 RUN mkdir -p /app/output
 
 # Expose port 3001 for the server
 EXPOSE 3001
 
-# Command to run the app
-CMD ["node", "server.js"] 
+# Command to run the app (serves backend + frontend)
+CMD ["node", "server.js"]
