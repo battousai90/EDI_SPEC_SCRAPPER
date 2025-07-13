@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Box,
   Button,
@@ -141,6 +141,7 @@ function FormatGeneration({ scrapingResult }) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [ixpathFolder, setIxpathFolder] = useState('');
+  const folderInputRef = useRef();
 
   // Snackbar State
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -178,15 +179,20 @@ function FormatGeneration({ scrapingResult }) {
   };
 
   const handleFolderSelect = async () => {
-    try {
-      const handle = await window.showDirectoryPicker();
-      const folderPath = handle.name; // Note: Secure environments only
+    if (folderInputRef.current) {
+      folderInputRef.current.value = null; // reset
+      folderInputRef.current.click();
+    }
+  };
+
+    const handleFolderChange = (event) => {
+    const files = event.target.files;
+    if (files.length > 0) {
+      // On prend le chemin du premier fichier, qui contient le dossier parent
+      const fullPath = files[0].webkitRelativePath || files[0].name;
+      const folderPath = fullPath.split('/')[0];
       setIxpathFolder(folderPath);
       showSnackbar(`Working folder: ${folderPath}`, 'info');
-    } catch (err) {
-      console.error('Error selecting folder:', err);
-      setError('Error selecting folder');
-      showSnackbar('Error selecting folder', 'error');
     }
   };
 
@@ -204,7 +210,7 @@ function FormatGeneration({ scrapingResult }) {
           standard,
           revision,
           messageType,
-          ixpathFolder: `C:\\${ixpathFolder}`,
+          ixpathFolder, // Utilise le chemin tel que sélectionné
           format,
         }),
       });
@@ -354,6 +360,14 @@ function FormatGeneration({ scrapingResult }) {
             >
               Define iXpath folder
             </Button>
+            <input
+              type="file"
+              webkitdirectory="true"
+              directory=""
+              ref={folderInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFolderChange}
+            />
             {ixpathFolder && (
               <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
                 Working folder: {ixpathFolder}
@@ -544,4 +558,4 @@ function FormatGeneration({ scrapingResult }) {
   );
 }
 
-export default FormatGeneration; 
+export default FormatGeneration;
